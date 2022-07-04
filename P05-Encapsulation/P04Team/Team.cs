@@ -29,7 +29,7 @@ namespace PersonsInfo
                 return this.reserveTeam.AsReadOnly();
             } 
         }
-        public string Name { get => name; set => name = value; }
+        //public string Name { get => name; set => name = value; }
         public void AddPlayer(Person person)
         {
             if (person.Age < 40)

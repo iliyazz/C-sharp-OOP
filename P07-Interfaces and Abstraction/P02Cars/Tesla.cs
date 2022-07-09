@@ -3,9 +3,9 @@ namespace Cars
 {
     public class Tesla : IElectricCar, ICar
     {
-        public int Battery { get; set; }
-        public string Model { get; set; }
-        public string Color { get; set; }
+        public int Battery { get; private set; }
+        public string Model { get; private set; }
+        public string Color { get; private set; }
 
         public Tesla(string model, string color, int battery)
         {

@@ -1,181 +1,179 @@
-﻿namespace Robots.Test
+﻿namespace Robots.Tests
 {
-    using NUnit.Framework;
     using System;
+    using NUnit.Framework;
 
     public class RobotsTests
     {
-
         [Test]
-        public void ConstructorShouldreturnvalidData()
+        public void CapacityShouldThrowExceptionIfValeuIsLessThanZero()
         {
-            var robotManager = new RobotManager(0);
 
-            Assert.AreEqual(0, robotManager.Count);
-            Assert.AreEqual(0, robotManager.Capacity);
-
+            Assert.Throws<ArgumentException>(() =>
+            {
+                var robotManager = new RobotManager(-1);
+            }, "Invalid capacity!");
         }
 
         [Test]
-        public void ConstructorShouldThrowsInvalidOperationExceptionIfCapacityIsNEgative()
+        public void CapacityShouldReturnCorrectCapacity()
         {
-            
-            Assert.Throws<ArgumentException>(() => new RobotManager(-2));
+            var robotManager = new RobotManager(5);
 
+            int expectedCapacity = 5;
+            int actualCapacity = robotManager.Capacity;
+            Assert.AreEqual(expectedCapacity, actualCapacity);
         }
 
         [Test]
-        public void ConstructorRetyrnProperCapacity()
+        public void CountShouldReturnCorrectValue()
         {
-            var robotManager = new RobotManager(44);
-
-            Assert.AreEqual(44, robotManager.Capacity);
-            
-
-        }
-
-        [Test]
-        public void AddShouldThrowsInvalidOperationExceptionIfCapacityIsFull()
-        {
-            var robotManager = new RobotManager(2);
-
-            var robot = new Robot("Ted", 55);
-            var robot1 = new Robot("Pesho", 45);
-            robotManager.Add(robot);
+            var robotManager = new RobotManager(5);
+            Robot robot1 = new Robot("name1", 1000);
+            Robot robot2 = new Robot("name2", 1500);
+            Robot robot3 = new Robot("name3", 2000);
             robotManager.Add(robot1);
-
-            Assert.Throws<InvalidOperationException>(() => robotManager.Add(new Robot("Gosho", 59)));
-
+            robotManager.Add(robot2);
+            robotManager.Add(robot3);
+            int expectedCount = 3;
+            int actualCounty = robotManager.Count;
+            Assert.AreEqual(expectedCount, actualCounty);
         }
 
-
-
-
         [Test]
-        public void AddShouldThrowsInvalidOperationExceptionIfRobotExist()
+        public void AddShouldThrowExceptionRobotNameExist()
         {
-            var robotManager = new RobotManager(3);
-
-            var robot = new Robot("Ted", 55);
-            var robot1 = new Robot("Pesho", 45);
-            robotManager.Add(robot);
+            var robotManager = new RobotManager(5);
+            Robot robot1 = new Robot("name1", 1000);
+            Robot robot2 = new Robot("name2", 1500);
+            Robot robot3 = new Robot("name3", 2000);
             robotManager.Add(robot1);
-
-            Assert.Throws<InvalidOperationException>(() => robotManager.Add(new Robot("Pesho", 59)));
-
+            robotManager.Add(robot2);
+            robotManager.Add(robot3);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                robotManager.Add(robot2);
+            }, $"There is already a robot with name {robot2.Name}!");
         }
 
         [Test]
-        public void RemoveShouldReducesTheCOuntIfRobotExist()
+        public void AddShouldThrowExceptionIfNotEnoughCapacity()
         {
             var robotManager = new RobotManager(2);
-
-            var robot = new Robot("Ted", 55);
-            var robot1 = new Robot("Pesho", 45);
-            robotManager.Add(robot);
-
+            Robot robot1 = new Robot("name1", 1000);
+            Robot robot2 = new Robot("name2", 1500);
+            Robot robot3 = new Robot("name3", 2000);
             robotManager.Add(robot1);
-
-            Assert.AreEqual(2, robotManager.Count);
-
-            robotManager.Remove("Pesho");
-
-            Assert.AreEqual(1, robotManager.Count);
-
-
-
+            robotManager.Add(robot2);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                robotManager.Add(robot3);
+            }, "Not enough capacity!");
         }
 
         [Test]
-        public void RemoveShouldThrowsInvalidOperationExceptionIfRobotNotExist()
+        public void RemoveShouldThrowExceptionRobotNametDoesNotExist()
         {
-            var robotManager = new RobotManager(2);
-
-            var robot = new Robot("Ted", 55);
-
-            robotManager.Add(robot);
-
-            Assert.Throws<InvalidOperationException>(() => robotManager.Remove("Pesho"));
-
+            var robotManager = new RobotManager(5);
+            Robot robot1 = new Robot("name1", 1000);
+            Robot robot2 = new Robot("name2", 1500);
+            Robot robot3 = new Robot("name3", 2000);
+            robotManager.Add(robot1);
+            robotManager.Add(robot3);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                robotManager.Remove("name2");
+            }, $"Robot with the name {robot2.Name} doesn't exist!");
         }
 
         [Test]
-        public void WorkShouldThrowsInvalidOperationExceptionIfBateryISLessThenNeededOne()
+        public void RemoveShouldRemoveRobotFromCollection()
         {
-            var robotManager = new RobotManager(2);
-
-            var robot = new Robot("Ted", 55);
-
-            robotManager.Add(robot);
-
-            Assert.Throws<InvalidOperationException>(() => robotManager.Work("Ted", "DoWork", 56));
-
+            var robotManager = new RobotManager(5);
+            Robot robot1 = new Robot("name1", 1000);
+            Robot robot2 = new Robot("name2", 1500);
+            Robot robot3 = new Robot("name3", 2000);
+            robotManager.Add(robot1);
+            robotManager.Add(robot2);
+            robotManager.Add(robot3);
+            robotManager.Remove("name2");
+            int expectedCount = 2;
+            int actualCounty = robotManager.Count;
+            Assert.AreEqual(expectedCount, actualCounty);
         }
 
         [Test]
-        public void WorkShouldThrowsInvalidOperationExceptionIfRobotNotExist()
+        public void WorkShouldThrowExceptionIfRobotNameDoesNotExist()
         {
-            var robotManager = new RobotManager(2);
-
-            Assert.Throws<InvalidOperationException>(() => robotManager.Work("Pesho", "DoWork", 23));
-
+            var robotManager = new RobotManager(5);
+            Robot robot1 = new Robot("name1", 1000);
+            Robot robot2 = new Robot("name2", 1500);
+            Robot robot3 = new Robot("name3", 2000);
+            robotManager.Add(robot1);
+            robotManager.Add(robot2);
+            robotManager.Add(robot3);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                robotManager.Work("NonExistingName", "hardWork", 2300);
+            }, "Robot with the name NonExistingName doesn't exist!");
         }
 
         [Test]
-        public void ChargeShouldReturnWithFullCharge()
+        public void WorkShouldThrowExceptionIfBatteryUssageIsLessThanBattery()
         {
-            var robotManager = new RobotManager(2);
-
-            var robot = new Robot("Ted", 100);
-
-            robotManager.Add(robot);
-
-            robotManager.Work("Ted", "DoWork", 66);
-
-            Assert.AreEqual(34, robot.Battery);
-
-            robotManager.Charge("Ted");
-
-            Assert.AreEqual(100, robot.Battery);
-
-            robotManager.Work("Ted", "DoWork", 100);
-
-            Assert.AreEqual(0, robot.Battery);
+            var robotManager = new RobotManager(5);
+            Robot robot1 = new Robot("name1", 1000);
+            robotManager.Add(robot1);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                robotManager.Work(robot1.Name, "hardWork", 2300);
+            }, $"{robot1.Name} doesn't have enough battery!");
         }
 
         [Test]
-        public void ChargeShouldThrowsInvalidOperationExceptionIfRobotNotExist()
+        public void WorkShouldReduceBattery()
         {
-            var robotManager = new RobotManager(2);
-
-            var robot = new Robot("Ted", 100);
-
-            robotManager.Add(robot);
-
-            Assert.Throws<InvalidOperationException>(() => robotManager.Charge("Pesho"));
-
+            var robotManager = new RobotManager(5);
+            Robot robot1 = new Robot("name1", 5000);
+            robotManager.Add(robot1);
+            int expectedBattery = 2000;
+            robotManager.Work(robot1.Name, "hardWork", 3000);
+            int actualBattery = robot1.Battery;
+            Assert.AreEqual(expectedBattery, actualBattery);
         }
 
         [Test]
-        public void ChargeShouldReturnMaxCarge()
+        public void ChargeShoudThrowExceptionIfRobotnameDoesNotexist()
         {
-            var robotManager = new RobotManager(2);
-
-            var robot = new Robot("Ted", 100);
-
-            robotManager.Add(robot);
-
-            robotManager.Work("Ted", "DoWork", 66);
-
-            robotManager.Charge("Ted");
-
-            Assert.AreEqual(100, robot.MaximumBattery);
-            Assert.AreEqual(100, robot.Battery);
-
-
+            var robotManager = new RobotManager(5);
+            Robot robot1 = new Robot("name1", 1000);
+            Robot robot2 = new Robot("name2", 1500);
+            Robot robot3 = new Robot("name3", 2000);
+            robotManager.Add(robot1);
+            robotManager.Add(robot2);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                robotManager.Charge(robot3.Name);
+            }, $"Robot with the name {robot3.Name} doesn't exist!");
         }
+
+        [Test]
+        public void ChargeShoudChargeBatteryToFullCapacity()
+        {
+            var robotManager = new RobotManager(5);
+            Robot robot1 = new Robot("name1", 5000);
+            robotManager.Add(robot1);
+            int expectedBattery = 2000;
+            robotManager.Work(robot1.Name, "hardWork", 3000);
+            int actualBattery = robot1.Battery;
+            Assert.AreEqual(expectedBattery, actualBattery);
+            robotManager.Charge(robot1.Name);
+            Assert.AreEqual(5000, robot1.Battery);
+        }
+
+
+
 
 
     }
-
 }

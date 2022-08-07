@@ -46,7 +46,6 @@
                 throw new InvalidOperationException("Not enough capacity!");
             }
 
-
             this.robots.Add(robot);
         }
 
